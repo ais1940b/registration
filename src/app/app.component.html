@@ -1,0 +1,158 @@
+<style>
+  thead,
+  tfoot {
+    background-color: #3f87a6;
+    color: #fff;
+  }
+
+  tbody {
+    background-color: #e4f0f5;
+  }
+
+  table {
+    border-collapse: collapse;
+    border: 2px solid rgb(200, 200, 200);
+    letter-spacing: 1px;
+    font-family: sans-serif;
+    font-size: 0.8rem;
+  }
+
+  td,
+  th {
+    border: 1px solid rgb(190, 190, 190);
+    padding: 5px 10px;
+    text-align: center;
+  }
+
+  td {
+    text-align: center;
+  }
+
+  .clear {
+    color: red !important;
+  }
+
+  .cursor-pointer {
+    cursor: pointer;
+  }
+</style>
+<div class="card m-3">
+  <h5 class="card-header">Registration</h5>
+  <div class="card-body">
+    <form [formGroup]="registrationForm">
+      <div class="form-row">
+        <div class="form-group col-5">
+          <label>User Name:</label>
+          <input type="text" formControlName="userName" class="form-control"
+            [ngClass]="{ 'is-invalid': submitted && registrationformControl.userName.errors }" />
+          <div *ngIf="submitted && registrationformControl.userName.errors" class="invalid-feedback">
+            <div *ngIf="registrationformControl.userName.errors?.required">
+              First Name is required
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group col-5">
+          <label>Email:</label>
+          <input type="text" formControlName="email" class="form-control"
+            [ngClass]="{ 'is-invalid': submitted && registrationformControl.email.errors }" />
+          <div *ngIf="submitted && registrationformControl.email.errors" class="invalid-feedback">
+            <div *ngIf="registrationformControl.email.errors?.required">Email is required</div>
+            <div *ngIf="registrationformControl.email.errors?.email">
+              Email must be a valid email address
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="form-group" formArrayName="addresses">
+        <h6 class="mb-4">Address:</h6>
+        <div [formGroupName]="i" *ngFor="let control of addressFormGroup.controls; let i = index;">
+          <div class="form-row">
+            <div class="form-group col-5">
+              <label>City:</label>
+              <input type="text" formControlName="city" class="form-control"
+                [ngClass]="{ 'is-invalid': submitted && getaddressFormGroup(i).controls['city'].errors?.['required'] }" />
+              <div *ngIf="submitted && getaddressFormGroup(i).controls['city']" class="invalid-feedback">
+                <div *ngIf="getaddressFormGroup(i).controls['city'].errors?.['required']">City is required</div>
+              </div>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group col-5">
+              <label>State:</label>
+              <input type="text" formControlName="state" class="form-control"
+                [ngClass]="{ 'is-invalid': submitted && getaddressFormGroup(i).controls['city'].errors?.['required'] }" />
+              <div *ngIf="submitted && submitted && getaddressFormGroup(i).controls['state']" class="invalid-feedback">
+                <div *ngIf="getaddressFormGroup(i).controls['state'].errors?.['required']">State is required</div>
+              </div>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group col-5">
+              <label>Pin code:</label>
+              <input type="text" formControlName="pincode" class="form-control"
+                [ngClass]="{ 'is-invalid': submitted && getaddressFormGroup(i).controls['pincode'].errors?.['required'] }" />
+              <div *ngIf="submitted && getaddressFormGroup(i).controls['pincode']" class="invalid-feedback">
+                <div *ngIf="getaddressFormGroup(i).controls['pincode'].errors?.['required']">PinCode is required</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="text-left">
+            <button class="btn btn-primary mr-1" (click)="addAddress()">Add Address</button>
+            <button class="btn btn-secondary" (click)="removeAddress(i)">
+              Delete Address
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="text-center">
+        <button class="btn btn-primary mr-1" (click)="onSubmit()">Register User</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="card m-3">
+  <h5 class="card-header">Registered Users</h5>
+  <div class="card-body">
+    <table>
+      <thead>
+        <tr>
+          <th colspan="4" class="text-center">User Details</th>
+        </tr>
+      </thead>
+      <thead>
+        <tr>
+          <th>User Name</th>
+          <th>Email</th>
+          <th>Address</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let user of userList; let userIndex = index">
+          <th scope="row" [textContent]="user.userName"></th>
+          <td [textContent]="user.email"></td>
+          <td>
+            <div class="mb-4" *ngFor="let address of user.addresses; let addressindex = index;">
+              <h6>Address {{addressindex + 1 }}</h6><br>
+              <span [textContent]="'city: ' + address.city"></span><br>
+              <span [textContent]="'state: ' + address.state"></span><br>
+              <span [textContent]="'pincode: ' + address.pincode"></span>
+            </div><br>
+          </td>
+          <td>
+            <a class="clear cursor-pointer" title="remove" data-toggle="tooltip" (click)="removeUser(userIndex)"><i
+                class="material-icons">&#xe5cd;</i></a>
+          </td>
+        </tr>
+        <tr *ngIf="userList?.length == 0">
+          <td colspan="4" class="text-center">There is not records yet.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
